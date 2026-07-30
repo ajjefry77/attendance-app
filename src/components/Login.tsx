@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import type { CurrentUser } from '../types';
 import { loginStudent } from '../lib/db';
 import { formatJalali, todayISO } from '../lib/utils';
-import { CheckIcon, ClipboardIcon, ClockIcon, LockIcon, PrimaryButton, TextInput, UserIcon, XIcon } from './ui';
+import { CheckIcon, ClipboardIcon, ClockIcon, EyeIcon, EyeOffIcon, LockIcon, PrimaryButton, TextInput, UserIcon, XIcon } from './ui';
 
 const PROFESSOR = { username: 'sajad', password: 'Sajad.salehabadi' };
 
@@ -20,6 +20,7 @@ export default function Login({ onLogin }: { onLogin: (u: CurrentUser) => void }
   const [error, setError] = useState('');
   const [shaking, setShaking] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -98,8 +99,16 @@ export default function Login({ onLogin }: { onLogin: (u: CurrentUser) => void }
 
             <label className="mt-4 block">
               <span className="mb-1.5 block text-xs font-bold text-petrol-950/70">رمز عبور</span>
-              <TextInput icon={<LockIcon className="h-4 w-4" />} type="password" dir="ltr" className="text-left font-mono"
-                value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" />
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 start-3.5 flex items-center text-petrol-950/40 z-10"><LockIcon className="h-4 w-4" /></span>
+                <input type={showPass ? 'text' : 'password'} dir="ltr"
+                  value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••"
+                  className="w-full rounded-xl border border-petrol-900/15 bg-white py-3 pe-10 ps-11 text-sm font-medium text-petrol-950 outline-none transition-all duration-300 placeholder:font-normal placeholder:text-petrol-950/35 focus:border-saffron-400 focus:ring-4 focus:ring-saffron-400/20 text-left font-mono" />
+                <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1}
+                  className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-petrol-950/40 transition-colors hover:text-petrol-950">
+                  {showPass ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                </button>
+              </div>
             </label>
 
             {error && (

@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { AttendanceActions, Session, Student } from '../../types';
 import { formatJalali, generateCode, toFa } from '../../lib/utils';
-import { KeyIcon, PlusIcon, PrimaryButton, RefreshIcon, TextInput, TrashIcon, UserIcon } from '../ui';
+import { EyeIcon, EyeOffIcon, KeyIcon, PlusIcon, PrimaryButton, RefreshIcon, TextInput, TrashIcon, UserIcon } from '../ui';
 import type { ToastType } from '../useToast';
 
 interface Props {
@@ -16,6 +16,7 @@ export default function StudentsTab({ students, sessions, actions, push }: Props
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,7 +75,13 @@ export default function StudentsTab({ students, sessions, actions, push }: Props
         <label className="mt-4 block">
           <span className="mb-1.5 block text-xs font-bold text-petrol-950/70">رمز عبور (حداقل ۶ کاراکتر)</span>
           <div className="flex gap-2">
-            <TextInput dir="ltr" className="text-left font-mono" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
+            <div className="relative flex-1">
+              <TextInput dir="ltr" type={showPass ? 'text' : 'password'} className="text-left font-mono pe-10" value={password} onChange={e => setPassword(e.target.value)} placeholder="password" />
+              <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1}
+                className="absolute inset-y-0 end-0 flex items-center pe-3 text-petrol-950/40 transition-colors hover:text-petrol-950">
+                {showPass ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+              </button>
+            </div>
             <button type="button" onClick={() => setPassword(generateCode(7))} title="تولید رمز تصادفی"
               className="grid w-12 shrink-0 place-items-center rounded-xl border border-petrol-900/15 bg-petrol-50 text-petrol-700 transition-all duration-300 hover:rotate-180 hover:border-saffron-400 hover:bg-saffron-100 hover:text-saffron-700">
               <RefreshIcon className="h-4 w-4" />

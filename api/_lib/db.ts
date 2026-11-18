@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
-import { hashPassword } from './password';
-import { schemaStatements, upsertProfessor } from './sql';
+import { hashPassword } from './password.js';
+import { schemaStatements, upsertProfessor } from './sql.js';
 
 type Row = Record<string, unknown>;
 

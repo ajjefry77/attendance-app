@@ -1,7 +1,7 @@
-import { readToken } from './_lib/auth';
-import { ensureSchema, query } from './_lib/db';
-import { bearerToken, fail, send, type ApiRequest, type ApiResponse } from './_lib/http';
-import { listAttendance, listSessions, listStudents } from './_lib/sql';
+import { readToken } from './_lib/auth.js';
+import { ensureSchema, query } from './_lib/db.js';
+import { bearerToken, fail, send, type ApiRequest, type ApiResponse } from './_lib/http.js';
+import { listAttendance, listSessions, listStudents } from './_lib/sql.js';
 
 interface StudentRow {
   id: string;

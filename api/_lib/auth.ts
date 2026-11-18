@@ -32,7 +32,13 @@ export function readToken(token: string | null): TokenPayload | null {
   const [body, signature] = token.split('.');
   if (!body || !signature) return null;
 
-  const expected = Buffer.from(signatureOf(body), 'utf8');
+  let expected: Buffer;
+  try {
+    expected = Buffer.from(signatureOf(body), 'utf8');
+  } catch {
+    // AUTH_SECRET پیکربندی نشده است؛ به‌جای کرش، توکن نامعتبر حساب می‌شود.
+    return null;
+  }
   const given = Buffer.from(signature, 'utf8');
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
 

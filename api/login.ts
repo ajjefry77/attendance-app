@@ -1,8 +1,8 @@
-import { createToken } from './_lib/auth';
-import { ensureSchema, query } from './_lib/db';
-import { fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http';
-import { verifyPassword } from './_lib/password';
-import { findProfessor, findStudent } from './_lib/sql';
+import { createToken } from './_lib/auth.js';
+import { ensureSchema, query } from './_lib/db.js';
+import { fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http.js';
+import { verifyPassword } from './_lib/password.js';
+import { findProfessor, findStudent } from './_lib/sql.js';
 
 interface CredentialRow {
   id: string;

@@ -1,7 +1,7 @@
-import { readToken } from './_lib/auth';
-import { ensureSchema, query } from './_lib/db';
-import { bearerToken, fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http';
-import { countAttendance, findSession, insertAttendance } from './_lib/sql';
+import { readToken } from './_lib/auth.js';
+import { ensureSchema, query } from './_lib/db.js';
+import { bearerToken, fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http.js';
+import { countAttendance, findSession, insertAttendance } from './_lib/sql.js';
 
 interface SessionRow {
   id: string;

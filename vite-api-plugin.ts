@@ -30,8 +30,12 @@ export function devApi(env: Vars): Plugin {
     name: 'attendance-dev-api',
     apply: 'serve',
     configureServer(server: ViteDevServer) {
+      // مقادیر هر بار از .env خوانده می‌شوند تا ویرایش فایل روی همان سرور اثر بگذارد.
       for (const [key, value] of Object.entries(env)) {
-        if (process.env[key] === undefined) process.env[key] = value;
+        process.env[key] = value;
+      }
+      if (!env.DATABASE_URL && !process.env.DATABASE_URL) {
+        server.config.logger.warn('[api] DATABASE_URL در .env نیست؛ مسیرهای /api خطای ۵۰۰ می‌دهند.');
       }
 
       server.middlewares.use('/api', async (req, res, next) => {

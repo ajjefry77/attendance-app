@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { readToken } from './_lib/auth';
-import { ensureSchema, query } from './_lib/db';
-import { bearerToken, fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http';
-import { hashPassword } from './_lib/password';
-import { deleteStudent as deleteStudentSql, insertStudent } from './_lib/sql';
+import { readToken } from './_lib/auth.js';
+import { ensureSchema, query } from './_lib/db.js';
+import { bearerToken, fail, readObject, send, textValue, type ApiRequest, type ApiResponse } from './_lib/http.js';
+import { hashPassword } from './_lib/password.js';
+import { deleteStudent as deleteStudentSql, insertStudent } from './_lib/sql.js';
 
 function isDuplicate(error: unknown): boolean {
   return error instanceof Error && /duplicate key|unique constraint/i.test(error.message);

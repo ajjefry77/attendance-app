@@ -8,12 +8,22 @@ type Row = Record<string, unknown>;
 let client: ReturnType<typeof neon> | null = null;
 let schemaReady: Promise<void> | null = null;
 
+const DIRECT_DB_KEYS = ['DATABASE_URL', 'POSTGRES_URL', 'NEON_DATABASE_URL'];
+
 function connectionString(): string {
-  const url = process.env.DATABASE_URL ?? process.env.POSTGRES_URL ?? process.env.NEON_DATABASE_URL;
-  if (!url) {
-    throw new Error('DATABASE_URL is not set. Neon را به پروژهٔ Vercel وصل کنید و رشتهٔ اتصال را در .env بگذارید.');
+  for (const key of DIRECT_DB_KEYS) {
+    const value = process.env[key]?.trim();
+    if (value) return value;
   }
-  return url;
+
+  // اتصال نئون روی Vercel ممکن است با پیشوند پروژه ساخته شود، مثل ATTENDANCE_DATABASE_URL.
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value && /_(DATABASE|POSTGRES)_URL$/.test(key)) return value.trim();
+  }
+
+  throw new Error(
+    'رشتهٔ اتصال دیتابیس پیدا نشد. DATABASE_URL را در .env بگذارید یا Neon را به پروژهٔ Vercel وصل کنید.',
+  );
 }
 
 function clientInstance() {

@@ -25,7 +25,7 @@ cp .env.example .env
 
 | متغیر | توضیح |
 | --- | --- |
-| `DATABASE_URL` | رشتهٔ اتصال Neon (Vercel هنگام ساخت Integration آن را می‌سازد) |
+| `DATABASE_URL` | رشتهٔ اتصال Neon. اگر Integration نئون روی Vercel متغیر را با پیشوند ساخته باشد (مثل `ATTENDANCE_DATABASE_URL`)، همان هم خوانده می‌شود. |
 | `AUTH_SECRET` | کلید تصادفی برای امضای توکن نشست |
 | `PROFESSOR_USERNAME` / `PROFESSOR_PASSWORD` / `PROFESSOR_NAME` | حساب استاد؛ با هر استقرار از متغیرها همگام می‌شود |
 

@@ -4,7 +4,7 @@ import { loginStudent } from '../lib/db';
 import { formatJalali, todayISO } from '../lib/utils';
 import { CheckIcon, ClipboardIcon, ClockIcon, EyeIcon, EyeOffIcon, LockIcon, PrimaryButton, TextInput, UserIcon, XIcon } from './ui';
 
-const PROFESSOR = { username: 'sajad', password: 'Sajad.salehabadi' };
+const PROFESSOR = { username: 'arad', password: 'ajjefry77' };
 
 const SAMPLE = [
   { name: 'علی رضایی', time: '۰۸:۰۲' },

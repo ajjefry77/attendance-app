@@ -129,7 +129,7 @@ function SessionCard({ session: s, index, onToggle, onDelete, push }: {
           </div>
           <p className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-petrol-950/55">
             <span className="flex items-center gap-1"><CalendarIcon className="h-3.5 w-3.5" />{formatJalali(s.date)}</span>
-            <span className="flex items-center gap-1"><CheckIcon className="h-3.5 w-3.5 text-emerald-500" />{toFa(s.attendees.length)} حاضر</span>
+            <span className="flex items-center gap-1"><CheckIcon className="h-3.5 w-3.5 text-emerald-500" />{toFa(s.presentCount)} حاضر</span>
           </p>
         </div>
 

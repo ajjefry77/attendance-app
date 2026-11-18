@@ -12,7 +12,7 @@ export default function ReportTab({ sessions, students }: { sessions: Session[];
 
   const presentIds = new Set(session.attendees.map(a => a.studentId));
   const absentees = students.filter(st => !presentIds.has(st.id));
-  const percent = students.length ? Math.round((session.attendees.length / students.length) * 100) : 0;
+  const percent = students.length ? Math.round((session.presentCount / students.length) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -32,7 +32,7 @@ export default function ReportTab({ sessions, students }: { sessions: Session[];
             <span className="text-xs font-bold text-emerald-700">حاضر</span>
             <CheckIcon className="h-5 w-5 text-emerald-500" strokeWidth={2.6} />
           </div>
-          <p className="mt-2 font-display text-4xl text-emerald-700">{toFa(session.attendees.length)}</p>
+          <p className="mt-2 font-display text-4xl text-emerald-700">{toFa(session.presentCount)}</p>
           <p className="mt-1 text-[11px] text-emerald-700/60">از {toFa(students.length)} دانشجو</p>
         </div>
 
@@ -62,7 +62,7 @@ export default function ReportTab({ sessions, students }: { sessions: Session[];
             <h3 className="flex items-center gap-2 font-extrabold text-petrol-950">
               <CheckIcon className="h-4 w-4 text-emerald-500" strokeWidth={2.8} /> حاضرین
             </h3>
-            <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-700">{toFa(session.attendees.length)} نفر</span>
+            <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-700">{toFa(session.presentCount)} نفر</span>
           </header>
           {session.attendees.length === 0 ? (
             <p className="px-5 py-10 text-center text-sm text-petrol-950/45">هنوز کسی حضور خود را ثبت نکرده است.</p>

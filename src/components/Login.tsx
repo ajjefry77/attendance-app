@@ -1,10 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import type { CurrentUser } from '../types';
-import { loginStudent } from '../lib/db';
+import type { LoginResult } from '../types';
+import { ApiError, login } from '../lib/api';
 import { formatJalali, todayISO } from '../lib/utils';
 import { CheckIcon, ClipboardIcon, ClockIcon, EyeIcon, EyeOffIcon, LockIcon, PrimaryButton, TextInput, UserIcon, XIcon } from './ui';
-
-const PROFESSOR = { username: 'arad', password: 'ajjefry77' };
 
 const SAMPLE = [
   { name: 'علی رضایی', time: '۰۸:۰۲' },
@@ -13,7 +11,7 @@ const SAMPLE = [
   { name: 'زهرا محمدی', time: '۰۸:۱۶' },
 ];
 
-export default function Login({ onLogin }: { onLogin: (u: CurrentUser) => void }) {
+export default function Login({ onLogin }: { onLogin: (result: LoginResult) => void }) {
   const [role, setRole] = useState<'student' | 'professor'>('student');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,21 +32,16 @@ export default function Login({ onLogin }: { onLogin: (u: CurrentUser) => void }
     setError('');
     setBusy(true);
     try {
-      let ok: CurrentUser | null = null;
-
-      if (role === 'professor') {
-        if (username.trim() === PROFESSOR.username && password === PROFESSOR.password)
-          ok = { role: 'professor', name: 'سجاد صالح‌آبادی' };
-        else setError('نام کاربری یا رمز عبور استاد نادرست است.');
+      onLogin(await login(role, username, password));
+      return;
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setError(role === 'professor' ? 'نام کاربری یا رمز عبور استاد نادرست است.' : 'نام کاربری یا رمز عبور دانشجو نادرست است.');
+      } else if (err instanceof ApiError && err.status === 500) {
+        setError('خطا در سرور؛ اتصال دیتابیس را بررسی کنید.');
       } else {
-        const st = await loginStudent(username, password);
-        if (st) ok = { role: 'student', studentId: st.id };
-        else setError('نام کاربری یا رمز عبور دانشجو نادرست است.');
+        setError('خطا در اتصال به سرور؛ اینترنت را بررسی کنید.');
       }
-
-      if (ok) { onLogin(ok); return; }
-    } catch {
-      setError('خطا در اتصال به سرور؛ اینترنت را بررسی کنید.');
     } finally {
       setBusy(false);
     }

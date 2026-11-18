@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { AttendanceActions, CurrentUser, Session, Student } from '../../types';
+import { ApiError } from '../../lib/api';
 import { formatJalali, formatTime, todayISO, toFa } from '../../lib/utils';
 import { BookIcon, CalendarIcon, CheckIcon, ClockIcon, EmptyState, LogOutIcon, PrimaryButton, ToastHost, UserIcon } from '../ui';
 import { useToast } from '../useToast';
@@ -44,25 +45,27 @@ export default function StudentPanel({ user, students, sessions, actions, onLogo
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selected || busy) return;
-    if (selected.attendees.some(a => a.studentId === student.id)) return;
+    if (myRecord(selected)) return;
 
-    if (code.trim().toUpperCase() === selected.code.toUpperCase()) {
-      setBusy(true);
-      try {
-        await actions.markAttendance(selected.id, student);
-        setCode('');
-        setJustMarked(selected.id);
-        setTimeout(() => setJustMarked(null), 2600);
-        push('حضور شما با موفقیت ثبت شد.');
-      } catch {
+    setBusy(true);
+    try {
+      await actions.markAttendance(selected.id, code);
+      setCode('');
+      setJustMarked(selected.id);
+      setTimeout(() => setJustMarked(null), 2600);
+      push('حضور شما با موفقیت ثبت شد.');
+    } catch (err) {
+      if (err instanceof ApiError && err.code === 'invalid_code') {
+        setShaking(true);
+        setTimeout(() => setShaking(false), 500);
+        push('عبارت ورود نادرست است؛ دوباره تلاش کنید.', 'error');
+      } else if (err instanceof ApiError && err.code === 'session_closed') {
+        push('این جلسه بسته شده است.', 'error');
+      } else {
         push('خطا در ثبت حضور؛ دوباره تلاش کنید.', 'error');
-      } finally {
-        setBusy(false);
       }
-    } else {
-      setShaking(true);
-      setTimeout(() => setShaking(false), 500);
-      push('عبارت ورود نادرست است؛ دوباره تلاش کنید.', 'error');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -127,7 +130,7 @@ export default function StudentPanel({ user, students, sessions, actions, onLogo
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-extrabold text-petrol-950">{s.title}</span>
-                        <span className="mt-0.5 block text-xs text-petrol-950/50">{formatJalali(s.date)} · {toFa(s.attendees.length)} نفر حاضر</span>
+                        <span className="mt-0.5 block text-xs text-petrol-950/50">{formatJalali(s.date)} · {toFa(s.presentCount)} نفر حاضر</span>
                       </span>
                       {rec ? (
                         <span className="shrink-0 rounded-full bg-emerald-100 px-3 py-1.5 text-[11px] font-bold text-emerald-700">

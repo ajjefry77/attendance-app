@@ -1,32 +1,64 @@
-# React + TypeScript + Vite
+# سامانه حضور و غیاب کلاس
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + Vite برای رابط کاربری، Vercel Functions برای API، و PostgreSQL (Neon) برای ذخیره‌سازی.
+هیچ وابستگی‌ای به Firebase وجود ندارد.
 
-Currently, two official plugins are available:
+## معماری
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| لایه | فناوری | مسیر |
+| --- | --- | --- |
+| رابط کاربری | React + Vite + Tailwind | `src/` |
+| API | Vercel Functions (Node) | `api/` |
+| دیتابیس | PostgreSQL روی Neon | جداول در `api/_lib/sql.ts` |
+| احراز هویت | توکن امضاشده با HMAC + scrypt برای رمزها | `api/_lib/auth.ts`، `api/_lib/password.ts` |
 
-## React Compiler
+جداول: `students`، `professors`، `sessions`، `attendance`. ساخت جداول در اولین درخواست
+به‌صورت خودکار و idempotent انجام می‌شود (`ensureSchema` در `api/_lib/db.ts`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## متغیرهای محیطی
 
-## Expanding the Oxlint configuration
+فایل `.env.example` را به `.env` کپی کنید و مقادیر را پر کنید:
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+cp .env.example .env
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+| متغیر | توضیح |
+| --- | --- |
+| `DATABASE_URL` | رشتهٔ اتصال Neon (Vercel هنگام ساخت Integration آن را می‌سازد) |
+| `AUTH_SECRET` | کلید تصادفی برای امضای توکن نشست |
+| `PROFESSOR_USERNAME` / `PROFESSOR_PASSWORD` / `PROFESSOR_NAME` | حساب استاد؛ با هر استقرار از متغیرها همگام می‌شود |
+
+## اجرای محلی
+
+```bash
+npm install
+npm run dev
+```
+
+پلاگین `vite-api-plugin.ts` توابع پوشهٔ `api/` را داخل همان سرور Vite اجرا می‌کند؛
+پس برای توسعهٔ محلی نیازی به Vercel CLI نیست. متغیرهای `.env` هم به‌صورت خودکار خوانده می‌شوند.
+
+ساخت نسخهٔ production:
+
+```bash
+npm run build
+npm run lint
+```
+
+## استقرار روی Vercel با Neon
+
+1. پروژه را در GitHub بگذارید و در Vercel با گزینهٔ **Add New → Project** ایمپورت کنید
+   (Framework Preset: Vite، Build Command: `npm run build`، Output: `dist`).
+2. در داشبورد پروژه: **Storage → Marketplace → Neon** را نصب کنید و یک دیتابیس بسازید.
+   Vercel متغیر `DATABASE_URL` را به‌صورت خودکار به پروژه اضافه می‌کند.
+3. در **Settings → Environment Variables** مقادیر `AUTH_SECRET`، `PROFESSOR_USERNAME`،
+   `PROFESSOR_PASSWORD` و `PROFESSOR_NAME` را برای Production و Preview تنظیم کنید.
+4. Redeploy کنید. اولین درخواست، جداول را می‌سازد و حساب استاد را ثبت می‌کند.
+
+## نکات امنیتی
+
+- رمزها با scrypt و نمک یکتا در سرور هش می‌شوند؛ هش و نمک هرگز به مرورگر فرستاده نمی‌شود.
+- کد جلسه فقط برای استاد برگردانده می‌شود؛ بررسی صحت کد در `api/attendance.ts` سمت سرور است.
+- نام کاربری دانشجویان فقط برای استاد قابل مشاهده است.
+- برای تغییر رمز استاد، مقدار `PROFESSOR_PASSWORD` را در Vercel تغییر دهید و Redeploy کنید.

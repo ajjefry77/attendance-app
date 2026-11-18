@@ -13,10 +13,11 @@ interface Props {
   students: Student[];
   sessions: Session[];
   actions: AttendanceActions;
+  name: string;
   onLogout: () => void;
 }
 
-export default function ProfessorPanel({ students, sessions, actions, onLogout }: Props) {
+export default function ProfessorPanel({ students, sessions, actions, name, onLogout }: Props) {
   const [tab, setTab] = useState<TabId>('sessions');
   const { toasts, push } = useToast();
 
@@ -45,7 +46,7 @@ export default function ProfessorPanel({ students, sessions, actions, onLogout }
             </span>
             <div>
               <h1 className="font-display text-xl leading-none">پنل استاد</h1>
-              <p className="mt-1.5 text-[11px] text-white/55">سجاد صالح‌آبادی</p>
+              <p className="mt-1.5 text-[11px] text-white/55">{name}</p>
             </div>
           </div>
           <div className="flex items-center gap-2.5">

@@ -111,7 +111,7 @@ export default function App() {
   if (!user) return <Login onLogin={handleLogin} />;
 
   if (user.role === 'professor')
-    return <ProfessorPanel students={students} sessions={sessions} actions={actions} onLogout={logout} />;
+    return <ProfessorPanel students={students} sessions={sessions} actions={actions} name={user.name} onLogout={logout} />;
 
   return <StudentPanel user={user} students={students} sessions={sessions} actions={actions} onLogout={logout} />;
 }
